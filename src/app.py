@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from pymongo import MongoClient
+
 
 app = FastAPI(
     title='Test API',
@@ -12,7 +14,8 @@ origins = [
     "http://localhost",
     "https://localhost",
     "http://localhost:8080",
-]
+    "http://localhost:8000/users/1"
+] 
 
 app.add_middleware(
     CORSMiddleware,
@@ -32,9 +35,17 @@ async def createUser(message: str):
     return JSONResponse(content={'message': message}, status_code=200)
 
 
-@app.get('/users/{user}')
-async def getUser(user: str) -> dict:
-    return {'user': user}
+
+client = MongoClient("mongodb://localhost:27017")
+db = client['Einaki']
+users = db['Users']
+
+print("users:: ", users.find_one({'userId': '1'})) 
+print(db.list_collection_names())
+
+@app.get('/users/{userId}')
+async def getUser(userId: str):
+    return users.find_one({'userId': userId})
 
 
 # https://www.youtube.com/watch?v=PW1RhQPuQxc&t=1953s
