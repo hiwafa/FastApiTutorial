@@ -22,7 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get('/', tags=['root'])
+@app.get('/', tags=['root']) 
 async def home() -> dict:
     return {'message': 'first fastapi app'}
 
@@ -30,6 +30,11 @@ async def home() -> dict:
 @app.post('/create', description='A simple post request through this endpoint')
 async def createUser(message: str):
     return JSONResponse(content={'message': message}, status_code=200)
+
+
+@app.get('/users/{user}')
+async def getUser(user: str) -> dict:
+    return {'user': user}
 
 
 # https://www.youtube.com/watch?v=PW1RhQPuQxc&t=1953s
